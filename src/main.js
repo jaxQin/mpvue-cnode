@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import App from './App'
+// 字体组件
+import icon from '@/components/icons.js'
+console.log(icon)
+Vue.use(icon)
 
 // 导入过滤器
 import * as filters from '@/common/js/filters'

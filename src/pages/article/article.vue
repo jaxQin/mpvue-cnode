@@ -1,12 +1,7 @@
 <template>
     <div class="article-wrap" v-if="article">
-        <div class="test">
-
-        </div>
-        <svg class="icon" aria-hidden="true" style="fill:red">
-            <use xlink:href="#icon-heart"></use>
-        </svg>
-        <text class="iconfont icon-heart" style="color:blue"></text>
+    <icon type="heart"></icon>
+    <icona type="heart" :size="40" color="red"></icona>
         <div class="head-box">
             <h2 class="head-title">
             {{article.title}}
@@ -34,8 +29,9 @@
 <script>
 import fly from '@/utils/fly'
 import typeBlock from '@/components/type-block'
+import icona from '@/components/icon'
 export default {
-    name: "",
+    name: "article",
     data() {
         return {
             article: null,
@@ -43,6 +39,7 @@ export default {
     },
     components: {
         typeBlock,
+        icona,
     },
     async onLoad() {
         const {
@@ -61,9 +58,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../../static/font.css';
-
-
 .article-wrap {
     .head-box {
         padding: 14px;
