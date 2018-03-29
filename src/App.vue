@@ -13,6 +13,7 @@ export default {
 
 <style>
 .container {
+  font-size: 14px;
   width: 100%;
   min-height: 100vh;
   height: 100%;

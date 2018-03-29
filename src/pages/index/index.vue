@@ -6,7 +6,7 @@
         </scroll-view>
         <swiper :current="currentTab" :style="'height:'+contentHeight" class="swiper-box" duration="300" @change="swiperChange">
             <swiper-item v-for="(item,index) in navList" :key="index">
-                <view class="swiper-item">{{item.title}}</view>
+                <content-v v-if="index==currentTab" :currentTab="item"></content-v>
             </swiper-item>
         </swiper>
     </div>
@@ -14,6 +14,7 @@
 <script>
 import fly from "@/utils/fly";
 import wxp from 'minapp-api-promise';
+import content from '@/components/content'
 import {
     navList
 } from '@/common/js/basic'
@@ -49,24 +50,25 @@ export default {
             let leftWidth = (this.winWidth - navList.length * 60) / 2
             return leftWidth + 60 * this.currentTab + 'px'
         },
-        contentHeight(){
-        	return this.winHeight-60+'px'
+        contentHeight() {
+            return this.winHeight - 62 + 'px'
         }
+    },
+    components: {
+        contentV: content,
     },
     async onLoad() {
         // 获取系统消息
         let info = await wxp.getSystemInfo();
-        console.log(info)
         this.winWidth = info.windowWidth;
         this.winHeight = info.windowHeight
-
     },
 
 };
 </script>
 <style lang="scss" scoped>
 .container {
-	height:100%;
+    height: 100%;
     .swiper-tab {
         width: 100%;
         text-align: center;

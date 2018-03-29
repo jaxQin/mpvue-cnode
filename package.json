@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "flyio": "^0.4.3",
+    "lodash": "^4.17.5",
     "minapp-api-promise": "^1.0.1",
     "mpvue": "^1.0.6",
     "vuex": "^2.3.1"
