@@ -10,11 +10,6 @@ export default {
         size: [Number, String],
         color: String
     },
-    created() {
-        console.log(999)
-        console.log(this.type)
-        console.log(this.styles)
-    },
     computed: {
         classes() {
             return `${prefixCls}${this.type}`;

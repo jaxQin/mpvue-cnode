@@ -76,7 +76,7 @@ export default {
         white-space: nowrap;
         position: relative;
         .swiper-tab-item {
-            transition: all .1s;
+            transition: all $time;
             font-size: 18px;
             height: 60px;
             display: inline-block;
@@ -89,9 +89,9 @@ export default {
             position: absolute;
             left: 0;
             height: 2px;
-            background: red;
+            background: $slider-color;
             bottom: 30px;
-            transition: left .2s;
+            transition: left $time;
             z-index: 99;
         }
     }

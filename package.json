@@ -14,6 +14,8 @@
     "lodash": "^4.17.5",
     "minapp-api-promise": "^1.0.1",
     "mpvue": "^1.0.6",
+    "mpvue-wxparse": "^0.4.5",
+    "sass-resources-loader": "^1.3.3",
     "vuex": "^2.3.1"
   },
   "devDependencies": {

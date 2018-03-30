@@ -6,13 +6,18 @@
         精华
     </div>
     <div class="feed-label feed-label-other" v-else>
-        {{item.type}}
+        {{type}}
     </div>
 </template>
 <script>
 export default {
     name: "",
-    props:['item']
+    props: ['item'],
+    computed: {
+        type() {
+            return this.getTopicType(this.item.tab)
+        }
+    },
 }
 </script>
 <style lang="scss" scoped>
@@ -30,7 +35,7 @@ export default {
         color: #333;
     }
     &.feed-label-top {
-        background-color: #80bd01;
+        background-color: $light-color;
         color: #fff;
     }
 }

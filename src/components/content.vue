@@ -1,17 +1,13 @@
 <template>
     <div class="content">
         <scroll-view scroll-y style="height:100%;" @scroll="scrollFn" @scrolltolower="toLow">
-            <div @tap="goArticle(item)" class="feed-li" v-for="(item,index) in list" :key="index">
+            <a :href="'/pages/article/main?id='+item.id" class="feed-li" v-for="(item,index) in list" :key="index">
                 <div class="feed-title">
                     <type-block :item="item"></type-block>
                     <p>{{item.title}}</p>
                 </div>
                 <div class="feed-content">
-                    <a href="">
-                        <div class="avatar">
-                            <img :src="item.author.avatar_url">
-                        </div>
-                    </a>
+                    <avatar :user="item.author"></avatar>
                     <div class="feed-right">
                         <div class="feed-right-top">
                             <div class="avatar-name">
@@ -31,13 +27,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </scroll-view>
     </div>
 </template>
 <script>
 import fly from '@/utils/fly'
 import typeBlock from '@/components/type-block'
+import avatar from '@/components/avatar'
 export default {
     name: "",
     data() {
@@ -64,7 +61,7 @@ export default {
         },
         goArticle(item) {
             wx.navigateTo({
-                url: '/pages/article/main?id='+item.id
+                url: '/pages/article/main?id=' + item.id
             })
         },
         scrollFn(e) {
@@ -76,8 +73,6 @@ export default {
         toLow(e) {
             // 这里就是滚动到底部了
             this.page++;
-            console.log(this.page)
-            console.log(`length:--${this.list.length}`)
             this.getList(this.page)
         }
     },
@@ -86,15 +81,15 @@ export default {
             return this.articleList.map(item => {
                 delete item.content
                 return Object.assign(item, {
-                    type: this.getTopicType(item.tab),
                     createTime: this.formatTime(item.create_at),
                     lastReplyTime: this.fromNow(item.last_reply_at),
                 })
             })
         }
     },
-    components:{
+    components: {
         typeBlock,
+        avatar,
     },
     async created() {
         this.getList();
@@ -106,7 +101,7 @@ export default {
     height: 100%;
     .feed-li {
         padding: 10px;
-        border-bottom: 1px solid #bcbab6;
+        border-bottom: 1px solid $grey-border;
         .feed-title {
             display: flex;
             align-items: center;
@@ -124,15 +119,9 @@ export default {
         }
         .feed-content {
             display: flex;
+            position: relative;
             font-size: 13px;
             margin-top: 8px;
-            .avatar {
-                width: 36px;
-                height: 36px;
-                flex-shrink: 0;
-                border-radius: 50%;
-                overflow: hidden;
-            }
             .feed-right {
                 flex: 1;
                 min-width: 0;
@@ -143,7 +132,7 @@ export default {
                     .author-name {}
                     .count {
                         span {
-                            color: #80bd01
+                            color: $light-color;
                         }
                     }
                 }
