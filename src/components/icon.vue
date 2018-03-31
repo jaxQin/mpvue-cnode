@@ -3,6 +3,9 @@
 </template>
 <script>
 const prefixCls = 'iconfont icon-';
+import {
+    obj2style
+} from '@/common/js/basic';
 export default {
     name: 'icon',
     props: {
@@ -22,11 +25,7 @@ export default {
             if (this.color) {
                 style.color = this.color;
             }
-            let str=[]
-            Object.keys(style).forEach(key => {
-                str.push(`${key}:${style[key]};`)
-            })
-            return str.join(';');
+            return obj2style(style)
         }
     }
 }
