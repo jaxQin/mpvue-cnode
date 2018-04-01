@@ -83,7 +83,6 @@ export default {
         let res = await fly.get(`topic/${id}`)
         if (res.success) {
             this.article = res.data;
-            wx.hideLoading();
             this.article = Object.assign(this.article, {
                 createTime: this.fromNow(res.data.create_at),
             });
@@ -94,6 +93,7 @@ export default {
                     return reply;
                 })
             }
+            wx.hideLoading();
         }
 
     }
@@ -179,7 +179,7 @@ export default {
                     color: #666;
                 }
             }
-            .comment-content{
+            .comment-content {
                 margin-top: 8px;
             }
         }

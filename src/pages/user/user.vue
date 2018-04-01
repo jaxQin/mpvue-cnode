@@ -1,6 +1,6 @@
 <template>
     <div class="user-wrap">
-        <div class="user-head-wrap">
+        <div class="user-head-wrap" :style="'height:'+height+'px'">
             <div class="avatar">
                 <avatar v-if="author" :user="author" :size="90"></avatar>
             </div>
@@ -18,34 +18,12 @@
             </div>
         </div>
         <slider-nav :navList="navList" :currentTab.sync="currentTab"></slider-nav>
-        <swiper :current="currentTab" :style="'height:'+contentHeight" class="swiper-box" duration="300" @change="swiperChange">
+        <swiper :current="currentTab" class="swiper-box" duration="300" @change="swiperChange" :style="'height:'+contentHeight">
             <swiper-item v-for="(item,index) in navList" :key="index">
-                <scroll-view scroll-y style="height:100%;">
-                    {{item.title}}
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <scroll-view scroll-y style="height:100%;" @scroll="scrollFn" @scrolltoupper="toUp" v-if="articleList.length">
+                    <simple-article v-for="(item,i) in articleList" :article="item" :key="i"></simple-article>
                 </scroll-view>
+                <p v-else style="text-align:center">暂无数据</p>
             </swiper-item>
         </swiper>
     </div>
@@ -58,6 +36,7 @@ import sliderNav from '@/components/slider-nav'
 import avatar from '@/components/avatar'
 import wxParse from 'mpvue-wxparse';
 import wxp from 'minapp-api-promise';
+import simpleArticle from '@/components/simple-article'
 
 import {
     pick,
@@ -77,15 +56,29 @@ export default {
     name: "article",
     data() {
         return {
+            articleList: [],
+            height: 220,
             winHeight: null,
             navList: navList,
             article: null,
             user: null,
             author: null,
             currentTab: 0,
+            userId: null,
         }
     },
     methods: {
+        toUp() {
+            this.height = 220
+        },
+        scrollFn(e) {
+            // if (this.height = 0) return
+            let top = e.mp.detail.scrollTop
+            console.log(top)
+            if (top > 60) {
+                this.height = 0
+            }
+        },
         swiperChange(e) {
             let {
                 current
@@ -93,14 +86,13 @@ export default {
             this.currentTab = current;
         },
         // 获取用户信息
-        async getUserInfo(id = 'JacksonTian') {
+        async getUserInfo(id) {
             let res
             try {
                 res = await fly.get('user/' + id);
             } catch (err) {
                 console.log(err)
             }
-            console.log(res)
             if (res.success) {
                 //处理注册时间
                 let {
@@ -111,14 +103,47 @@ export default {
                     create_at,
                 });
             }
+            this.articleList = this.user.recent_replies;
             this.author = pick(this.user, ['loginname', 'avatar_url'])
         },
+        // 获取用户收藏的主题
+        async getUserCollect() {
+            wx.showLoading({
+                title: '加载中'
+            })
+            try {
+                let res = await fly.get('/topic_collect/' + this.userId)
+                if (res.success && res.data && res.data.length) {
+                    this.articleList = res.data.map(item => {
+                        item.author = pick(this.user, ['loginname', 'avatar_url'])
+                        return pick(item, ['title', 'id', 'last_reply_at', 'author'])
+                    })
+                }
+            } catch (err) {
 
+            }
+            wx.hideLoading()
+        }
+
+    },
+    watch: {
+        currentTab(newVal, oldVal) {
+            switch (newVal) {
+                case 0:
+                    this.articleList = this.user.recent_replies;
+                    break;
+                case 1:
+                    this.articleList = this.user.recent_topics;
+                    break;
+                default:
+                    this.getUserCollect()
+            }
+        },
     },
     computed: {
         contentHeight() {
             if (this.winHeight) {
-                return this.winHeight - 44 - 200 + 'px'
+                return this.winHeight - 44 - this.height + 'px'
             }
         }
     },
@@ -128,33 +153,36 @@ export default {
         wxParse,
         avatar,
         sliderNav,
+        simpleArticle,
     },
     async onLoad() {
         // 获取系统消息
         let info = await wxp.getSystemInfo();
         this.winHeight = info.windowHeight
-            // const {
-            //     id
-            // } = this.$root.$mp.query;
-            // wx.showLoading({
-            //     title: '加载中',
-            // })
-        this.getUserInfo()
-            // wx.hideLoading()
+        this.userId = this.$root.$mp.query.id;
+        wx.showLoading({
+            title: '加载中',
+        })
+        this.height=220
+        this.currentTab=0
+        this.getUserInfo(this.userId)
+        wx.hideLoading()
     }
 }
 </script>
 <style lang="scss" scoped>
 .user-wrap {
+    height: 100%;
     .user-head-wrap {
+        transition: height .6s;
+        overflow: hidden;
         text-align: center;
-        height: 200px;
+        height: 220px;
         background-size: 100%;
         // background-image: url('https://static.yximgs.com/s1/i/pages/kuaiying/bg-c8b7e3f5e0.png');
         background-image: url('http://s3.music.126.net/m/s/img/hot_music_bg_2x.jpg');
-        padding-top: 20px;
         .avatar {
-            margin: 0 auto;
+            margin: 20px auto 0;
             width: 90px;
         }
         .name-wrap {
@@ -187,10 +215,11 @@ export default {
     .swiper-box {
         display: block;
         width: 100%;
-        overflow: hidden;
+        overflow: auto;
         .swiper-item {
             height: 100%;
             text-align: center;
+            display: block;
         }
     }
 }

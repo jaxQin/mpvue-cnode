@@ -40,7 +40,6 @@ export default {
             const {
                 current
             } = e.target.dataset;
-            console.log(current)
             if (this.currentTab === current) return false
                 // else this.currentTab = current;
             else {
