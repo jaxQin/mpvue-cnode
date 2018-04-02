@@ -3,6 +3,8 @@
 ------
 
 基于mpVue开发的小程序版本的cnode社区，感谢美团开源的mpVue，基本上可以0学习成本快速开发一个小程序。
+
+
 **感谢以下插件**：
 
 > * [flyio](https://github.com/wendux/fly/blob/master/README-CH.md) - 同时支持浏览器、小程序、Node、Weex的基于Promise的跨平台http请求库。可以让您在多个端上尽可能大限度的实现代码复用
