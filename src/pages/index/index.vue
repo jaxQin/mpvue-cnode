@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <i-button type="primary">这是一个按钮</i-button>
         <slider-nav :menuWidth="60" :currentTab.sync="currentTab" :navList="this.navList"></slider-nav>
         <swiper :current="currentTab" :style="'height:'+contentHeight" class="swiper-box" duration="300" @change="swiperChange">
             <swiper-item v-for="(item,index) in navList" :key="index">
